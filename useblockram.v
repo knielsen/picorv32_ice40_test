@@ -14,8 +14,7 @@ module memcontroller_bram(
    reg [31:0] 	  memory [0:127];
    initial begin
       $readmemh("ramdata.list", memory);
-      $display($time, " First couple SRAM locations: 0x%h 0x%h 0x%h 0x%h",
-	       memory[0], memory[1], memory[2], memory[3]);
+      //$display($time, " First couple SRAM locations: 0x%h 0x%h 0x%h 0x%h", memory[0], memory[1], memory[2], memory[3]);
    end
    wire [6:0] adr7;
 

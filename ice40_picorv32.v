@@ -1,9 +1,11 @@
-`timescale 1 ns / 100 ps
+module top (
+   output [7:0]   LED,
+   input 	  crystal_clk,
+);
 
-module top();
-   reg clk;
-   reg nrst;
-   reg [63:0] num_cycles;
+   wire      clk;
+   reg [1:0] reset_counter = 2'b00;
+   reg 	     nrst = 1'b0;
 
    wire [31:0] mem_addr;
    wire [31:0] mem_wdata;
@@ -13,34 +15,20 @@ module top();
 
    wire cpu_trap;
    wire mem_instr;
-   reg [31:0] cpu_irq;
+   reg [31:0] cpu_irq = 0;
    wire [31:0] cpu_eoi;
    wire        cpu_trace_valid;
    wire [35:0] cpu_trace_data;
 
    wire [7:0]  output_leds;
 
-   initial begin
-      nrst = 1'b0;
-      cpu_irq = 0;
-      #100
-      nrst = 1'b1;
-   end
+   assign clk = crystal_clk;
+   assign LED = output_leds;
 
-   initial begin
-      clk = 1'b0;
-      num_cycles = 0;
-   end
-   always begin
-      #10 clk = 1'b1;
-      num_cycles <= num_cycles + 1;
-      #10 clk = 1'b0;
-      if (num_cycles >= 100000)
-	$finish;
-   end
-
-   initial begin
-     //$monitor($time, " #cy=%d clk=%b val=%b ins=%b rdy=%b wstrb=%b addr=%h wdat=%h rdat=%h", num_cycles, clk, mem_valid, mem_instr, mem_ready, mem_wstrb, mem_addr, mem_wdata, mem_rdata);
+   always @(posedge clk) begin
+      reset_counter <= reset_counter + 2'b01;
+      if (reset_counter == 2'b11)
+	nrst <= 1'b1;
    end
 
    memcontroller_bram mem_controller
@@ -85,8 +73,4 @@ module top();
        .leds(output_leds)
        );
 
-   always @(output_leds) begin
-      $display($time, " LEDS: %b", output_leds);
-   end
-
-endmodule // top
+endmodule

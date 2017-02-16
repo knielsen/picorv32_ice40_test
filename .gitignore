@@ -4,3 +4,6 @@
 *.o
 ramdata.list
 *.vvp
+*.asc
+*.blif
+*.rpt
