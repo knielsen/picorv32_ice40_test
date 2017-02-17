@@ -11,7 +11,7 @@ main(void)
   for (;;) {
     LED_WORD = counter ^ (counter >> 1);
     ++counter;
-    for (i = 0; i < 100/*0000*/; ++i)
+    for (i = 0; i < 1000000; ++i)
       asm volatile("");
   }
 }

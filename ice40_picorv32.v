@@ -4,7 +4,7 @@ module top (
 );
 
    wire      clk;
-   reg [1:0] reset_counter = 2'b00;
+   reg [7:0] reset_counter = 8'd0;
    reg 	     nrst = 1'b0;
 
    wire [31:0] mem_addr;
@@ -26,8 +26,8 @@ module top (
    assign LED = output_leds;
 
    always @(posedge clk) begin
-      reset_counter <= reset_counter + 2'b01;
-      if (reset_counter == 2'b11)
+      reset_counter <= reset_counter + 8'd1;
+      if (reset_counter[7])
 	nrst <= 1'b1;
    end
 
