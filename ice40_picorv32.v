@@ -4,6 +4,7 @@ module top (
 );
 
    wire      clk;
+   wire      pll_clock;
    reg [7:0] reset_counter = 8'd0;
    reg 	     nrst = 1'b0;
 
@@ -22,14 +23,23 @@ module top (
 
    wire [7:0]  output_leds;
 
-   assign clk = crystal_clk;
+   //assign clk = crystal_clk;
+   assign clk = pll_clock;
    assign LED = output_leds;
 
-   always @(posedge clk) begin
+   always @(posedge crystal_clk) begin
       reset_counter <= reset_counter + 8'd1;
       if (reset_counter[7])
 	nrst <= 1'b1;
    end
+
+   wire pll_dummy_out, pll_lock1;
+   SB_PLL40_CORE #(.FEEDBACK_PATH("SIMPLE"), .PLLOUT_SELECT("GENCLK"),
+		   .DIVR(4'd0), .DIVF(7'd63), .DIVQ(3'd4), // 12/1*64/16->48 MHz
+		   .FILTER_RANGE(3'b001)
+   ) mypll (.REFERENCECLK(crystal_clk),
+	    .PLLOUTGLOBAL(pll_clock), .PLLOUTCORE(pll_dummy_out), .LOCK(pll_lock1),
+	    .RESETB(1'b1), .BYPASS(1'b0));
 
    memcontroller_bram mem_controller
      ( .mem_valid(mem_valid),
