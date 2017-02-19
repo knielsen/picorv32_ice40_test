@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 
-#define LED_WORD (*(volatile uint8_t *)0x1ff)
+#define LED_WORD (*(volatile uint8_t *)0x400000ff)
 int
 main(void)
 {

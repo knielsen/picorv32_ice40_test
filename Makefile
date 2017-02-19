@@ -8,8 +8,8 @@ OBJCOPY=$(RISCV_DIR)/riscv32-unknown-elf-objcopy
 
 all: $(PROJ).rpt $(PROJ).bin picorv32_tb.vvp
 
-picorv32_tb.vvp: picorv32_tb.v picorv32.v useblockram.v debugleds.v
-	iverilog -o picorv32_tb.vvp picorv32_tb.v picorv32.v useblockram.v debugleds.v
+picorv32_tb.vvp: picorv32_tb.v picorv32.v useblockram.v debugleds.v addr_decoder.v
+	iverilog -o picorv32_tb.vvp picorv32_tb.v picorv32.v useblockram.v debugleds.v addr_decoder.v
 
 test3.bin: test3.elf
 	$(OBJCOPY) -O binary test3.elf test3.bin
@@ -31,7 +31,7 @@ sim: picorv32_tb.vvp ramdata.list
 
 %.blif: %.v
 	yosys -q -p 'synth_ice40 -top top -blif $@' $< \
-		picorv32.v useblockram.v debugleds.v
+		picorv32.v useblockram.v debugleds.v addr_decoder.v
 
 %.asc: $(PIN_DEF) %.blif
 	arachne-pnr -d $(subst hx,,$(subst lp,,$(DEVICE))) -o $@ -p $^
@@ -42,7 +42,7 @@ sim: picorv32_tb.vvp ramdata.list
 %.rpt: %.asc
 	icetime -d $(DEVICE) -mtr $@ $<
 
-$(PROJ).blif: picorv32.v useblockram.v debugleds.v ramdata.list
+$(PROJ).blif: picorv32.v useblockram.v debugleds.v addr_decoder.v ramdata.list
 
 prog: $(PROJ).bin
 	iceprog -S $<

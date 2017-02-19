@@ -11,6 +11,11 @@ module top();
    wire [3:0]  mem_wstrb;
    wire mem_valid, mem_ready;
 
+   wire bram_decode, leds_decode;
+   wire bram_mem_valid, leds_mem_valid;
+   wire bram_mem_ready, leds_mem_ready;
+   wire [31:0] bram_mem_rdata, leds_mem_rdata;
+
    wire cpu_trap;
    wire mem_instr;
    reg [31:0] cpu_irq;
@@ -43,16 +48,41 @@ module top();
      //$monitor($time, " #cy=%d clk=%b val=%b ins=%b rdy=%b wstrb=%b addr=%h wdat=%h rdat=%h", num_cycles, clk, mem_valid, mem_instr, mem_ready, mem_wstrb, mem_addr, mem_wdata, mem_rdata);
    end
 
+   // Built-in BRAM is at 0x0000xxxx.
+   assign bram_decode = (mem_addr[31:16] == 16'h0000);
    memcontroller_bram mem_controller
-     ( .mem_valid(mem_valid),
-       .mem_ready(mem_ready),
+     ( .mem_valid(bram_mem_valid),
+       .mem_ready(bram_mem_ready),
        .mem_addr(mem_addr),
        .mem_wdata(mem_wdata),
        .mem_wstrb(mem_wstrb),
-       .mem_rdata(mem_rdata),
+       .mem_rdata(bram_mem_rdata),
        .clk(clk),
        .nrst(nrst)
        );
+
+   // LEDs are at 0x400000xx.
+   assign leds_decode = (mem_addr[31:8] == 24'h400000);
+   debugleds leds_module
+     ( .mem_valid(leds_mem_valid),
+       .mem_ready(leds_mem_ready),
+       .mem_addr(mem_addr[7:2]),
+       .mem_wdata(mem_wdata),
+       .mem_wstrb(mem_wstrb),
+       .clk(clk),
+       .nrst(nrst),
+       .leds(output_leds)
+       );
+   assign leds_mem_rdata = 32'b0;
+
+   addr_decoder #(.N(2)) mydecoder
+     ( .cpu_mem_valid(mem_valid),
+       .cpu_mem_ready(mem_ready),
+       .cpu_mem_rdata(mem_rdata),
+       .dev_decode({ leds_decode, bram_decode }),
+       .dev_mem_valid({ leds_mem_valid, bram_mem_valid }),
+       .dev_mem_ready({ leds_mem_ready, bram_mem_ready }),
+       .dev_mem_rdata({ leds_mem_rdata, bram_mem_rdata }));
 
    picorv32 cpu
      ( .clk(clk),
@@ -74,15 +104,6 @@ module top();
        .eoi(cpu_eoi),
        .trace_valid(cpu_trace_valid),
        .trace_data(cpu_trace_data)
-       );
-
-   debugleds leds_module
-     ( .mem_valid(mem_valid),
-       .mem_addr(mem_addr),
-       .mem_wdata(mem_wdata),
-       .mem_wstrb(mem_wstrb),
-       .clk(clk),
-       .leds(output_leds)
        );
 
    always @(output_leds) begin
