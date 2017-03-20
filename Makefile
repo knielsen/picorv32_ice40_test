@@ -6,10 +6,19 @@ RISCV_DIR=/kvm/src/riscv/install/bin
 GCC=$(RISCV_DIR)/riscv32-unknown-elf-gcc
 OBJCOPY=$(RISCV_DIR)/riscv32-unknown-elf-objcopy
 
+SDRAM_CTRL_SRC=sdram_controller/autorefresh_counter.v sdram_controller/lfsr_count255.v \
+	sdram_controller/sdram_controller.v sdram_controller/sdram_control_fsm.v \
+	sdram_controller/delay_gen150us.v sdram_controller/lfsr_count64.v
+
 all: $(PROJ).rpt $(PROJ).bin picorv32_tb.vvp
 
-picorv32_tb.vvp: picorv32_tb.v picorv32.v useblockram.v debugleds.v addr_decoder.v
-	iverilog -o picorv32_tb.vvp picorv32_tb.v picorv32.v useblockram.v debugleds.v addr_decoder.v
+picorv32_tb.vvp: picorv32_tb.v picorv32.v useblockram.v debugleds.v addr_decoder.v \
+		picorv32_sdram.v micron_mt48lc16m16a2_simul/mt48lc16m16a2.v \
+		$(SDRAM_CTRL_SRC)
+	iverilog -o picorv32_tb.vvp picorv32_tb.v picorv32.v useblockram.v \
+		debugleds.v addr_decoder.v picorv32_sdram.v \
+		micron_mt48lc16m16a2_simul/mt48lc16m16a2.v \
+		$(SDRAM_CTRL_SRC)
 
 test3.bin: test3.elf
 	$(OBJCOPY) -O binary test3.elf test3.bin
