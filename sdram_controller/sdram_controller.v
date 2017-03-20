@@ -245,6 +245,8 @@ module sdram_controller (/*AUTOARG*/
     wire                            cpu_den_i;
     wire [CPU_DATA_WIDTH-1:0]       cpu_datain_i;            // To/From U0 of sdram_control_fsm.v
     wire [CPU_DATA_WIDTH-1:0]       cpu_dataout_i;            // To/From U0 of sdram_control_fsm.v
+    wire 			    sys_clk_i;
+    wire 			    sys_rst_i;
     
 `ifdef DISABLE_CPU_IO_BUS
     assign #WIREDLY o_data = cpu_dataout_i;

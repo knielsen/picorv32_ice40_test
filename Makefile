@@ -40,7 +40,8 @@ sim: picorv32_tb.vvp ramdata.list
 
 %.blif: %.v
 	yosys -q -p 'synth_ice40 -top top -blif $@' $< \
-		picorv32.v useblockram.v debugleds.v addr_decoder.v
+		picorv32.v useblockram.v debugleds.v addr_decoder.v picorv32_sdram.v \
+		$(SDRAM_CTRL_SRC)
 
 %.asc: $(PIN_DEF) %.blif
 	arachne-pnr -d $(subst hx,,$(subst lp,,$(DEVICE))) -o $@ -p $^
@@ -51,7 +52,9 @@ sim: picorv32_tb.vvp ramdata.list
 %.rpt: %.asc
 	icetime -d $(DEVICE) -mtr $@ $<
 
-$(PROJ).blif: picorv32.v useblockram.v debugleds.v addr_decoder.v ramdata.list
+$(PROJ).blif: picorv32.v useblockram.v debugleds.v addr_decoder.v picorv32_sdram.v \
+		$(SDRAM_CTRL_SRC) \
+		ramdata.list
 
 prog: $(PROJ).bin
 	iceprog -S $<

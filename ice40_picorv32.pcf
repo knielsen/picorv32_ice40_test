@@ -1,9 +1,69 @@
-set_io LED[0] B5
-set_io LED[1] B4
-set_io LED[2] A2
-set_io LED[3] A1
-set_io LED[4] C5
-set_io LED[5] C4
-set_io LED[6] B3
-set_io LED[7] C3
+#set_io LED[0] B5  # conflict with mem_ba[0]
+#set_io LED[1] B4  # conflict with mem_a[0]
+#set_io LED[2] A2  # conflict with mem_a[2]
+#set_io LED[3] A1  # conflict with mem_a[3]
+#set_io LED[4] C5  # conflict with mem_cs1
+#set_io LED[5] C4  # conflict with mem_ba[0]
+#set_io LED[6] B3  # conflict with mem_a[1]
+#set_io LED[7] C3  # conflict with mem_a[10]
+set_io LED[0] C16
+set_io LED[1] D16
+set_io LED[2] E16
+set_io LED[3] F16
+set_io LED[4] G16
+set_io LED[5] H16
+set_io LED[6] J15
+set_io LED[7] G14
 set_io crystal_clk J3
+
+set_io sdram_led A16
+
+# SDRAM stuff.
+set_io sdram_gpio1 A15
+set_io sdram_gpio2 B15
+set_io sdram_gpio3 B13
+set_io sdram_gpio4 B14
+set_io sdram_gpio5 B12
+
+set_io mem_d[0] B11
+set_io mem_d[1] A10
+set_io mem_d[2] C9
+set_io mem_d[3] A9
+set_io mem_d[4] B9
+set_io mem_d[5] B8
+set_io mem_d[6] A7
+set_io mem_d[7] B7
+set_io mem_d[8] M11
+set_io mem_d[9] N10
+set_io mem_d[10] P13
+set_io mem_d[11] N12
+set_io mem_d[12] T14
+set_io mem_d[13] T13
+set_io mem_d[14] T16
+set_io mem_d[15] T15
+
+set_io sdram_addr[0] B4
+set_io sdram_addr[1] B3
+set_io sdram_addr[2] A2
+set_io sdram_addr[3] A1
+set_io sdram_addr[4] T6
+set_io sdram_addr[5] R6
+set_io sdram_addr[6] T7
+set_io sdram_addr[7] R9
+set_io sdram_addr[8] T9
+set_io sdram_addr[9] P9
+set_io sdram_addr[10] C3
+set_io sdram_addr[11] P8
+set_io sdram_addr[12] R10
+
+set_io sdram_rasn B6
+set_io sdram_casn C6
+set_io sdram_dqm[0] T11
+set_io sdram_dqm[1] C7
+set_io sdram_clk P10
+set_io sdram_cke T10
+set_io sdram_wen A6
+set_io sdram_blockaddr[0] C4
+set_io sdram_blockaddr[1] B5
+set_io mem_cs1 C5
+set_io mem_cs2 A5

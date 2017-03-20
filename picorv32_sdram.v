@@ -28,13 +28,13 @@ module picorv32_sdram (
    wire sdram_idle;
    wire sdram_init_done;
    wire sdram_ack;
-   wire sdram_addr;
    reg [15:0] sdram_data_in;
    wire [15:0] sdram_data_out;
    reg [26:0] sdram_i_addr;
    reg sdram_adv;
    reg sdram_rwn;
    reg st_running;
+   wire cur_state_busy;
 
    // Some dummy / not-used sdram controller signals.
    wire sdram_data_req, sdram_write_done, sdram_read_done,
@@ -122,8 +122,10 @@ module picorv32_sdram (
 	mem_ready <= 0;
    end
 
+/*
    always @(*)
      $display($time, "   ? nrst=%b vld=%b bsy=%b idl=%b run=%b rdy=%b sdram_vld=%b do=0x%h", nrst, mem_valid, cur_state_busy, sdram_idle, st_running, mem_ready, sdram_data_valid, sdram_data_out);
+*/
 
 /*
    always @(posedge clk) begin

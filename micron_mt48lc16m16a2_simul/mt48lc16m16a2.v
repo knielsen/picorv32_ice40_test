@@ -173,6 +173,9 @@ module mt48lc16m16a2 (Dq, Addr, Ba, Clk, Cke, Cs_n, Ras_n, Cas_n, We_n, Dqm);
         $timeformat (-9, 1, " ns", 12);
     end
 
+always @(*)
+  $display($time, "       Dq=0x%h Addr=0x%h Ba=%b Clk=%b Cke=%b Cs_n=%b Ras_n=%b Cas_n=%b We_n=%b Dqm=%b", Dq, Addr, Ba, Clk, Cke, Cs_n, Ras_n, Cas_n, We_n, Dqm);
+
     // System clock generator
     always begin
         @ (posedge Clk) begin

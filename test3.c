@@ -10,22 +10,37 @@ main(void)
   uint8_t counter = 0;
   uint32_t i;
 
-  LED_WORD = 1;
-  LED_WORD = 2;
-  LED_WORD = 5;
   for (;;) {
-    for (counter = 0; counter < 16; ++counter)
-    {
-      LED_WORD = counter ^ (counter >> 1);
-      sdram[2*counter] = counter ^ (counter >> 1);
-      LED_WORD = sdram[2*counter];
-    }
-    for (counter = 0; counter < 16; ++counter)
-    {
-      LED_WORD = sdram[2*counter];
-      for (i = 0; i < 1; ++i)
-        ;
-      LED_WORD = 0xca;
-    }
+    sdram[0] = 0x0000;
+    sdram[2] = 0xffff;
+    LED_WORD = sdram[0];
+    for (i = 0; i < 1000000; ++i)
+      asm volatile("");
+    LED_WORD = sdram[2];
+    for (i = 0; i < 1000000; ++i)
+      asm volatile("");
   }
+
+/*
+  for (;;) {
+    LED_WORD = counter ^ (counter >> 1);
+    ++counter;
+    for (i = 0; i < 1000000; ++i)
+      asm volatile("");
+  }
+*/
+
+/*
+  for (;;) {
+    LED_WORD = 1;
+    sdram[0] = 2;
+    LED_WORD = sdram[0];
+    LED_WORD = 5;
+    sdram[2] = 10;
+    sdram[4] = 12;
+    LED_WORD = sdram[2];
+    LED_WORD = 11;
+    LED_WORD = sdram[4];
+  }
+*/
 }

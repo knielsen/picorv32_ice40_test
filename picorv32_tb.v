@@ -1,4 +1,5 @@
 `timescale 1 ns / 100 ps
+`default_nettype none
 
 module top();
    reg clk;
@@ -122,14 +123,14 @@ module top();
        .Cke(sdram_cke),
        .Cs_n(sdram_csn),
        .Ras_n(sdram_rasn),
-       .Cas_n(sdram_dasn),
+       .Cas_n(sdram_casn),
        .We_n(sdram_wen),
        .Dqm(sdram_dqm));
-   assign sdram_dq_inout = (!sdram_busdir ? sdram_dq_write : {16{1'bz}});
+   assign sdram_dq_inout = (sdram_busdir ? sdram_dq_write : {16{1'bz}});
    assign sdram_dq_read = sdram_dq_inout;
 
 always @(*)
-  $display($time, " dco=%b vld=%b rdy=%b adr=0x%h wstr=%b wdata=0x%h rdata=0x%h", { sdram_decode, leds_decode, bram_decode }, { sdram_mem_valid, leds_mem_valid, bram_mem_valid }, { sdram_mem_ready, leds_mem_ready, bram_mem_ready }, mem_addr, mem_wstrb, mem_wdata, mem_rdata);
+  $display($time, " dco=%b vld=%b rdy=%b adr=0x%h wstr=%b wdata=0x%h rdata=0x%h sdram_addr=0x%h", { sdram_decode, leds_decode, bram_decode }, { sdram_mem_valid, leds_mem_valid, bram_mem_valid }, { sdram_mem_ready, leds_mem_ready, bram_mem_ready }, mem_addr, mem_wstrb, mem_wdata, mem_rdata, sdram_addr);
 
    addr_decoder #(.N(3)) mydecoder
      ( .cpu_mem_valid(mem_valid),
